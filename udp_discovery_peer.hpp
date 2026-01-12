@@ -7,7 +7,16 @@
 #include "udp_discovery_peer_parameters.hpp"
 
 namespace udpdiscovery {
+    enum class NetworkState {
+        kOk,
+        kInterfacesChanged,
+        kNoInterfaces,
+        kSocketError
+    };
 namespace impl {
+
+
+
 long NowTime();
 
 void SleepFor(long time_ms);
@@ -19,6 +28,8 @@ class PeerEnvInterface {
   virtual void SetUserData(const std::string& user_data) = 0;
 
   virtual std::list<DiscoveredPeer> ListDiscovered() = 0;
+
+  virtual NetworkState GetNetworkState() = 0;
 
   virtual void Exit() = 0;
 };
@@ -52,6 +63,16 @@ class Peer {
    * \brief Lists all discovered peers.
    */
   std::list<DiscoveredPeer> ListDiscovered() const;
+
+  /**
+  * \brief Gets current network state.
+  */
+  NetworkState GetNetworkState() const;
+  
+  /**
+	* \brief Checks whether the network is healthy.
+	  */
+  bool IsNetworkHealthy() const;
 
   /**
    * \brief Stops discovery peer immediately. Working threads will finish
